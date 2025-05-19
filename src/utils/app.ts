@@ -1,7 +1,10 @@
 import express, { Application } from "express";
 import { applyRoutes } from "../middlewares";
+import { connectDB } from "../config";
 
 interface IApp {
+  applyMiddlewares(): void;
+  connectToDB(): void;
   getApp(): Application;
 }
 
@@ -10,8 +13,17 @@ class App implements IApp {
 
   constructor() {
     this.app = express();
+    this.applyMiddlewares();
+    this.connectToDB();
+  }
+
+  applyMiddlewares(): void {
     this.app.use(express.json());
     applyRoutes(this.app);
+  }
+
+  connectToDB(): void {
+    connectDB().then();
   }
 
   getApp(): Application {
