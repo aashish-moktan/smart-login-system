@@ -7,13 +7,15 @@
     "start": "node -r tsconfig-paths/register dist/index.js",
     "dev": "ts-node-dev --respawn -r tsconfig-paths/register src/index.ts",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "test:api": "jest tests/api --passWithNoTests"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.15.0",
@@ -21,6 +23,7 @@
     "zod": "^3.25.7"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.19",
