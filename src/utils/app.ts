@@ -2,28 +2,30 @@ import express, { Application } from "express";
 import { applyRoutes } from "@app/middlewares";
 import { connectDB } from "@app/config";
 
-interface IApp {
-  applyMiddlewares(): void;
-  connectToDB(): void;
-  getApp(): Application;
-}
-
-class App implements IApp {
+class App {
+  private static instance: App;
   private app: Application;
 
   constructor() {
     this.app = express();
     this.applyMiddlewares();
-    this.connectToDB();
   }
 
-  applyMiddlewares(): void {
+  public static async init(): Promise<any> {
+    if (!App.instance) {
+      App.instance = new App();
+      await App.instance.connectToDB();
+    }
+    return App.instance;
+  }
+
+  private applyMiddlewares(): void {
     this.app.use(express.json());
     applyRoutes(this.app);
   }
 
-  connectToDB(): void {
-    connectDB().then();
+  public async connectToDB(): Promise<any> {
+    await connectDB();
   }
 
   getApp(): Application {
@@ -31,4 +33,4 @@ class App implements IApp {
   }
 }
 
-export default new App();
+export default App;

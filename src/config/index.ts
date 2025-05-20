@@ -1,2 +1,2 @@
-export { connectDB as connectDB } from "./db";
-export { env as env } from "./env";
+export { connectDB, disconnectDB } from "./db";
+export { env } from "./env";
