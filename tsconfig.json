@@ -6,8 +6,14 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@app/*": ["./src/*"]
+    },
+    "sourceMap": true,
+    "sourceRoot": "/",
+    "inlineSources": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "tests/**/*.test.ts", "tests/**/*.ts"]
 }

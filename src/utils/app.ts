@@ -1,6 +1,6 @@
 import express, { Application } from "express";
-import { applyRoutes } from "../middlewares";
-import { connectDB } from "../config";
+import { applyRoutes } from "@app/middlewares";
+import { connectDB } from "@app/config";
 
 interface IApp {
   applyMiddlewares(): void;

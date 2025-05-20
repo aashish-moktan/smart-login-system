@@ -1,12 +1,12 @@
 {
   "name": "smart-login-system-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Smart login system",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node -r tsconfig-paths/register dist/index.js",
+    "dev": "ts-node-dev --respawn -r tsconfig-paths/register src/index.ts",
+    "build": "rm -rf dist && tsc",
     "test": "jest --passWithNoTests"
   },
   "keywords": [],
@@ -14,8 +14,11 @@
   "license": "ISC",
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "mongoose": "^8.15.0"
+    "mongoose": "^8.15.0",
+    "tsconfig-paths": "^4.2.0",
+    "zod": "^3.25.7"
   },
   "devDependencies": {
     "@types/express": "^5.0.2",
