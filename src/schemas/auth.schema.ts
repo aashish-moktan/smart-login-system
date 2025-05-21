@@ -7,4 +7,13 @@ export const registerUserSchema = z.object({
   }),
 });
 
+export const generateOTPForLoginSchema = z.object({
+  body: z.object({
+    email: z.string().min(1, "Email is required"),
+  }),
+});
+
 export type RegisterUserSchema = z.infer<typeof registerUserSchema>;
+export type GenerateOTPForLoginSchema = z.infer<
+  typeof generateOTPForLoginSchema
+>;

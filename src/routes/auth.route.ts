@@ -1,21 +1,29 @@
 import { Router } from "express";
 import { AuthController } from "@app/controllers";
-import { AuthService } from "@app/services";
-import { UserRepository } from "@app/repositories";
+import { AuthService, EmailService } from "@app/services";
+import { UserRepository, UserOtpRepository } from "@app/repositories";
+import { registerUserSchema, generateOTPForLoginSchema } from "@app/schemas";
 import validateRequest from "@app/middlewares/validateRequest.middleware";
-import { registerUserSchema } from "@app/schemas";
 
 const router = Router();
 
 export default (userRepository?: UserRepository) => {
+  const emailService = new EmailService();
   const userRepo = userRepository ?? new UserRepository();
-  const authService = new AuthService(userRepo);
+  const userOtpRepo = new UserOtpRepository();
+  const authService = new AuthService(userRepo, emailService, userOtpRepo);
   const authController = new AuthController(authService);
 
   router.post(
     "/register",
     validateRequest(registerUserSchema),
     authController.register
+  );
+
+  router.post(
+    "/login/otp/generate",
+    validateRequest(generateOTPForLoginSchema),
+    authController.generateOTPForLogin
   );
 
   return router;

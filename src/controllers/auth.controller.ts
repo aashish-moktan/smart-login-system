@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "@app/services";
 import { RegisterUserSchema } from "@app/schemas";
+import { successResponse } from "@app/utils";
 
 export class AuthController {
   constructor(private authService: AuthService) {
     this.register = this.register.bind(this);
+    this.generateOTPForLogin = this.generateOTPForLogin.bind(this);
   }
 
   public async register(
@@ -23,6 +25,24 @@ export class AuthController {
         return res.status(409).json({ error: err.message });
       }
       return res.status(500).json({ error: err.message });
+    }
+  }
+
+  public async generateOTPForLogin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> {
+    const { email } = req.body;
+    try {
+      await this.authService.generateOtpForLogin(email);
+      return successResponse(
+        res,
+        200,
+        "Login OTP has been sent to your email successfully"
+      );
+    } catch (error: any) {
+      next(error);
     }
   }
 }
