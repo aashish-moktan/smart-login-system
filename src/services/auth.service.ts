@@ -59,4 +59,29 @@ export class AuthService {
       throw error;
     }
   }
+
+  async loginWithOtp(email: string, otp: string) {
+    try {
+      const userOtp = await this.userOtpRepo.findOne({
+        email,
+        otp,
+        isUsed: false,
+      });
+      if (!userOtp) {
+        throw new AuthError("Email and OTP didn't match");
+      }
+
+      // check if otp is expired or not
+      if (Date.now() > Number(userOtp.expiresAt)) {
+        throw new AuthError("OTP Expired. Please generate new OTP again");
+      }
+
+      // update user otp isUsed status
+      this.userOtpRepo.updateById(userOtp._id.toString(), {
+        isUsed: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

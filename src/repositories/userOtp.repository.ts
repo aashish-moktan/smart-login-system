@@ -1,17 +1,18 @@
+import { Document, FilterQuery, UpdateQuery, Types } from "mongoose";
 import { UserOtpModel } from "@app/models";
-import { Document } from "mongoose";
 
-// Define interface for User Document
-export interface UserOtpDocument extends Document {
+// define interface for User Document
+export interface UserOtp extends Document {
   email: string;
   otp: string;
   expiresAt: Number;
   isUsed: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  _id: Types.ObjectId;
 }
 
-// Interface for user otp create (DTO)
+// interface for user otp create (DTO)
 export interface CreateOtpInput {
   email: string;
   otp: string;
@@ -19,9 +20,13 @@ export interface CreateOtpInput {
   isUsed?: boolean;
 }
 
+// interface for user find and update
+export type FindUserOtpQuery = FilterQuery<UserOtp>;
+export type UpdateUserOtpQuery = UpdateQuery<UserOtp>;
+
 export interface IUserOtpRepository {
-  findOtpByEmail(email: string): Promise<UserOtpDocument | null>;
-  create(otpData: CreateOtpInput): Promise<UserOtpDocument>;
+  findOtpByEmail(email: string): Promise<UserOtp | null>;
+  create(otpData: CreateOtpInput): Promise<UserOtp>;
 }
 
 export class UserOtpRepository implements IUserOtpRepository {
@@ -31,7 +36,17 @@ export class UserOtpRepository implements IUserOtpRepository {
     this.userOtpModel = UserOtpModel;
   }
 
-  async findOtpByEmail(email: string): Promise<UserOtpDocument | null> {
+  async findOne(query: FindUserOtpQuery): Promise<UserOtp | null> {
+    try {
+      return await this.userOtpModel.findOne(query).exec();
+    } catch (error: any) {
+      throw new Error(
+        `UserOtpService.findOne failed: ${(error as Error).message}`
+      );
+    }
+  }
+
+  async findOtpByEmail(email: string): Promise<UserOtp | null> {
     try {
       return await this.userOtpModel.findOne({ email, isUsed: false });
     } catch (error: any) {
@@ -39,12 +54,26 @@ export class UserOtpRepository implements IUserOtpRepository {
     }
   }
 
-  async create(otpData: CreateOtpInput): Promise<UserOtpDocument> {
+  async create(otpData: CreateOtpInput): Promise<UserOtp> {
     try {
       const userOtp = new this.userOtpModel(otpData);
       return await userOtp.save();
     } catch (error: any) {
       throw new Error(`Error storing user otp: ${error.message}`);
+    }
+  }
+
+  async updateById(
+    id: string,
+    updateData: UpdateUserOtpQuery
+  ): Promise<UserOtp | null> {
+    try {
+      return await this.userOtpModel.findByIdAndUpdate(id, updateData, {
+        new: true,
+        runValidators: true,
+      });
+    } catch (error: any) {
+      throw new Error(`Error updating user otp: ${error.message}`);
     }
   }
 }

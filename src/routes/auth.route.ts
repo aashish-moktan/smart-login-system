@@ -21,9 +21,15 @@ export default (userRepository?: UserRepository) => {
   );
 
   router.post(
-    "/login/otp/generate",
+    "/otp/generate",
     validateRequest(generateOTPForLoginSchema),
     authController.generateOTPForLogin
+  );
+
+  router.post(
+    "/login/otp",
+    validateRequest(generateOTPForLoginSchema),
+    authController.loginWithOtp
   );
 
   return router;

@@ -7,6 +7,7 @@ export class AuthController {
   constructor(private authService: AuthService) {
     this.register = this.register.bind(this);
     this.generateOTPForLogin = this.generateOTPForLogin.bind(this);
+    this.loginWithOtp = this.loginWithOtp.bind(this);
   }
 
   public async register(
@@ -41,6 +42,20 @@ export class AuthController {
         200,
         "Login OTP has been sent to your email successfully"
       );
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  public async loginWithOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> {
+    const { email, otp } = req.body;
+    try {
+      await this.authService.loginWithOtp(email, otp);
+      return successResponse(res, 200, "User logged in successfully");
     } catch (error: any) {
       next(error);
     }
