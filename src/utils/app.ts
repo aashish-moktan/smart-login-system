@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import { applyRoutes } from "@app/middlewares";
 import { connectDB } from "@app/config";
 import { UserRepository } from "@app/repositories";
+import { globalErrorHandler } from "@app/middlewares";
 
 export interface IDependencies {
   userRepository?: UserRepository;
@@ -30,6 +31,7 @@ class App {
   private applyMiddlewares(): void {
     this.app.use(express.json());
     applyRoutes(this.app, App.dependencies);
+    this.app.use(globalErrorHandler);
   }
 
   public async connectToDB(): Promise<any> {

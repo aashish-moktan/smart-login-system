@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "@app/services";
+import { RegisterUserSchema } from "@app/schemas";
 
 export class AuthController {
   constructor(private authService: AuthService) {
@@ -7,11 +8,10 @@ export class AuthController {
   }
 
   public async register(
-    req: Request,
+    req: Request<any, any, RegisterUserSchema["body"]>,
     res: Response,
     next: NextFunction
   ): Promise<any> {
-    console.log(req.body);
     const { email, password } = req.body;
     try {
       const user = await this.authService.register({ email, password });
