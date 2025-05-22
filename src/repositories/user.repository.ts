@@ -1,12 +1,13 @@
 import { UserModel } from "@app/models";
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 // Define interface for User Document
-export interface UserDocument extends Document {
+export interface User extends Document {
   email: string;
   password: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  _id: Types.ObjectId;
 }
 
 // Interface for user input data (DTO)
@@ -16,8 +17,8 @@ export interface CreateUserInput {
 }
 
 export interface IUserRepository {
-  findByEmail(email: string): Promise<UserDocument | null>;
-  create(userData: { email: string; password: string }): Promise<UserDocument>;
+  findByEmail(email: string): Promise<User | null>;
+  create(userData: CreateUserInput): Promise<User>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -27,7 +28,7 @@ export class UserRepository implements IUserRepository {
     this.userModel = UserModel;
   }
 
-  async findByEmail(email: string): Promise<UserDocument | null> {
+  async findByEmail(email: string): Promise<User | null> {
     try {
       return await this.userModel.findOne({ email });
     } catch (error: any) {
@@ -35,10 +36,7 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async create(userData: {
-    email: string;
-    password: string;
-  }): Promise<UserDocument> {
+  async create(userData: CreateUserInput): Promise<User> {
     try {
       const user = new this.userModel(userData);
       return await user.save();

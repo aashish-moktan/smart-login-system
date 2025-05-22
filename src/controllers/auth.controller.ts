@@ -18,14 +18,9 @@ export class AuthController {
     const { email, password } = req.body;
     try {
       const user = await this.authService.register({ email, password });
-      return res
-        .status(201)
-        .json({ message: "User registered", userId: user._id });
-    } catch (err: any) {
-      if (err.message === "User already exists") {
-        return res.status(409).json({ error: err.message });
-      }
-      return res.status(500).json({ error: err.message });
+      return successResponse(res, 201, "User registered", { userId: user._id });
+    } catch (error: any) {
+      throw error;
     }
   }
 
