@@ -5,6 +5,7 @@ import { Document, Types } from "mongoose";
 export interface User extends Document {
   email: string;
   password: string;
+  tokenVersion: number;
   createdAt?: Date;
   updatedAt?: Date;
   _id: Types.ObjectId;
@@ -19,6 +20,7 @@ export interface CreateUserInput {
 export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   create(userData: CreateUserInput): Promise<User>;
+  findByIdAndUpdate(userId: string, data: Partial<User>): Promise<User | null>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -42,6 +44,17 @@ export class UserRepository implements IUserRepository {
       return await user.save();
     } catch (error: any) {
       throw new Error(`Error creating user: ${error.message}`);
+    }
+  }
+
+  async findByIdAndUpdate(
+    userId: string,
+    data: Partial<User>
+  ): Promise<User | null> {
+    try {
+      return await this.userModel.findByIdAndUpdate(userId, data);
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -3,14 +3,16 @@ import path from "path";
 import { UserRepository } from "@app/repositories";
 import { AuthError, hashPassword } from "@app/utils";
 import { generateNumericOTP } from "@app/utils";
-import { EmailService } from "./email.service";
+import { EmailService } from "@app/services";
 import { UserOtpRepository } from "@app/repositories/userOtp.repository";
+import { TokenService } from "@app/services";
 
 export class AuthService {
   constructor(
     private userRepo: UserRepository,
     private emailService: EmailService,
-    private userOtpRepo: UserOtpRepository
+    private userOtpRepo: UserOtpRepository,
+    private tokenService: TokenService
   ) {}
 
   async register({ email, password }: { email: string; password: string }) {
@@ -71,7 +73,7 @@ export class AuthService {
         throw new AuthError("Email and OTP didn't match");
       }
 
-      // check if otp is expired or not
+      // check otp is expired or not
       if (Date.now() > Number(userOtp.expiresAt)) {
         throw new AuthError("OTP Expired. Please generate new OTP again");
       }
@@ -80,6 +82,24 @@ export class AuthService {
       this.userOtpRepo.updateById(userOtp._id.toString(), {
         isUsed: true,
       });
+
+      const tokenPayload = JSON.stringify({
+        email,
+        userId: userOtp._id.toString(),
+      });
+      const accessToken = this.tokenService.generateAccessToken(tokenPayload);
+      const refreshToken = this.tokenService.generateRefreshToken(tokenPayload);
+
+      // increment refresh token version
+      const user = await this.userRepo.findByEmail(email);
+      console.log(user);
+      if (Number(user?.tokenVersion) >= 0) {
+        await this.userRepo.findByIdAndUpdate(userOtp._id.toString(), {
+          tokenVersion: Number(user?.tokenVersion) + 1 || 0,
+        });
+      }
+
+      return { accessToken, refreshToken };
     } catch (error) {
       throw error;
     }

@@ -10,6 +10,8 @@ const envSchema = z.object({
   EMAIL_PORT: z.number().default(587),
   EMAIL_USER: z.string(),
   EMAIL_PASS: z.string(),
+  ACCESS_TOKEN_SECRET: z.string(),
+  REFRESH_TOKEN_SECRET: z.string(),
 });
 
 const _env = envSchema.safeParse({
@@ -20,6 +22,8 @@ const _env = envSchema.safeParse({
   EMAIL_PORT: Number(process.env.EMAIL_PORT),
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASS: process.env.EMAIL_PASS,
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
 });
 
 if (!_env.success) {
