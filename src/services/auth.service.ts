@@ -92,9 +92,8 @@ export class AuthService {
 
       // increment refresh token version
       const user = await this.userRepo.findByEmail(email);
-      console.log(user);
-      if (Number(user?.tokenVersion) >= 0) {
-        await this.userRepo.findByIdAndUpdate(userOtp._id.toString(), {
+      if (user && Number(user?.tokenVersion) >= 0) {
+        await this.userRepo.findByIdAndUpdate(user?._id.toString(), {
           tokenVersion: Number(user?.tokenVersion) + 1 || 0,
         });
       }

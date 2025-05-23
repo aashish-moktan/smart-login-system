@@ -52,7 +52,9 @@ export class UserRepository implements IUserRepository {
     data: Partial<User>
   ): Promise<User | null> {
     try {
-      return await this.userModel.findByIdAndUpdate(userId, data);
+      return await this.userModel.findByIdAndUpdate(userId, data, {
+        new: true,
+      });
     } catch (error) {
       throw error;
     }
